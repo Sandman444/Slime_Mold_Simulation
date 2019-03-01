@@ -10,7 +10,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
   //decaySystem(0.0015, 1); //TEMP: Animate
-  decaySystem(0.01); //TEMP: Step
+  decaySystem(1); //TEMP: Step
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -22,8 +22,12 @@ void twoPoints(ArrayList<Point> points){
   }
   
   //assign source and sink
-  source = points.get(p1);
-  sink = points.get(p2);
+  //source = points.get(p1);
+  //sink = points.get(p2);
+  for(Point p: points){
+    if(p.name == "C") source = p;
+    if(p.name == "A") sink = p;
+  }
   
   source.display(0, 255, 0); //green
   sink.display(0, 0, 255); //blues
@@ -112,8 +116,6 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   
   //Solve linear system: At*K*A*x = b  
   x = ((At.times(K)).times(A)).solve(b);
-  println("K:");
-  K.print(1,4);
   //assign flux amounts
   source.flux = totalFlux;
   sink.flux = 0;
@@ -127,7 +129,6 @@ void solveResistorNetwork(ArrayList<Edge> edges){
 }
 
 void decaySystem(float decayRate){
-  println("\nDecay");
   float conductivity = 0;
   //calculate change in conductivity for the time step
   for(Edge e : edges){
@@ -140,17 +141,11 @@ void decaySystem(float decayRate){
       greaterFlux = e.p2;
       lesserFlux = e.p1;    
     }*/
-    e.weight = 3*(abs(e.p1.flux - e.p2.flux));
-    //conductivity = abs((1/(100*e.weight/e.dist)) * (e.p1.flux - e.p2.flux));
-    //e.weight += ((100*conductivity) - (decayRate *e.weight)); //TEMP: step
-    //e.weight += ((conductivity) - (decayRate *e.weight)); //TEMP: animate
-    //println(e.toString() + ": " + 5*((100*conductivity) - (decayRate *e.weight)));
-    
-    //new Multiplicative Decay
-    //e.weight = e.weight * pow((float)Math.E, (-decayRate) * abs(conductivity)); 
-    //println(e.toString() + ": " + conductivity);
-    //println("\t Qij: " + conductivity);
-    //println("\t Dij: " + e.weight);
+    //e.weight = 3*(abs(e.p1.flux - e.p2.flux));
+    //conductivity = abs((e.dist/e.weight) * (e.p1.flux - e.p2.flux));
+    println("deltaD->"+e.p1.name+e.p2.name+": "+(abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate);
+    e.weight += (abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate;
+   // println("\n");
     e.display();
   } 
 }

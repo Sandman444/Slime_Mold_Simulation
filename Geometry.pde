@@ -26,6 +26,7 @@ class Point {
     stroke(255);
     strokeWeight(8);
     point(x, y);
+    text(name, x+10, y-10);
   }
   void display(float r, float g, float b){
     stroke(r, g, b);

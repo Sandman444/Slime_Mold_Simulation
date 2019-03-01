@@ -17,7 +17,7 @@ void setup(){
   //variables
   uiSize = 150;
   marginSize = 100;
-  numPoints = 5;
+  numPoints = 10;
   /*
   *100: Smooth
   *200: Slow
@@ -55,7 +55,7 @@ void setup(){
   points.add(p5);
   
   //Default Points
-  /*for(int i = 0; i < numPoints; i++){
+ /* for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
     p.setName(Character.toString((char) pointCount));
     pointCount++;
