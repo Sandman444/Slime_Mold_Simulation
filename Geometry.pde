@@ -50,15 +50,20 @@ class Point {
 
 //edge storage class
 class Edge {
+  final float initialWeight;
+  
   Point p1;
   Point p2;
   float weight;
   float dist;
+  boolean deadEdge;
   
   Edge(Point p1_, Point p2_){
      p1 = p1_;
      p2 = p2_;
-     weight = 1;
+     initialWeight = 1;
+     weight = initialWeight;
+     deadEdge = false;
      dist = sqrt(sq(p1.x - p2.x) + sq(p1.y - p2.y));
   }
   
@@ -68,21 +73,31 @@ class Edge {
     else
       return false;
   }
-
-  void display(){
-    if(weight > 0){
-      stroke(255);
-      strokeWeight(weight);
-      line(p1.x, p1.y, p2.x, p2.y);
+  Boolean testDeath(ArrayList<Edge> tempEdgeHolder){
+    
+    if(weight <= (initialWeight / 2)){
+      tempEdgeHolder.add(this);  
+       println("\t Kill edge ");
+      return true;
     }
+    else if(deadEdge == false){
+      return false;
+    }
+    else{
+      return true; 
+    }    
+  }
+  
+  void display(){
+    stroke(255);
+    strokeWeight(weight);
+    line(p1.x, p1.y, p2.x, p2.y);
   }
   
   void display(float r, float g, float b){
-    if(weight > 0){
-      stroke(r, g, b);
-      strokeWeight(weight);
-      line(p1.x, p1.y, p2.x, p2.y);
-    }
+    stroke(r, g, b);
+    strokeWeight(weight);
+    line(p1.x, p1.y, p2.x, p2.y);
   }
   
   String toString(){

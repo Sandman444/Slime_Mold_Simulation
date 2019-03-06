@@ -9,8 +9,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  //decaySystem(0.0015, 1); //TEMP: Animate
-  decaySystem(0.009); //TEMP: Step
+  decaySystem(0.09);
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -131,18 +130,42 @@ void solveResistorNetwork(ArrayList<Edge> edges){
 void decaySystem(float decayRate){
   //calculate change in conductivity for the time step
   println("\n" + "Decay testing");
+  
+  ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
   for(Edge e : edges){
     //Additive Decay attempt
     //e.weight = (abs(e.p1.flux - e.p2.flux));
-    e.weight += (abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate;
-    println(e.toString() + " pressure: " + (abs(e.p1.flux - e.p2.flux)));
+    //e.weight += (abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate;
+   
+    //println(e.toString() + " weight: " + e.weight);
+    //println(e.toString() + " pressure: " + (abs(e.p1.flux - e.p2.flux) - 0.5));
     
     //Multiplicative Decay attempt
-    /*float conductivity = 0;
-    conductivity = abs((e.dist/e.weight) * (e.p1.flux - e.p2.flux));
-    println("deltaD->"+e.p1.name+e.p2.name+": "+(abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate);
+    float conductivity = 0;
+    conductivity = e.p1.flux - e.p2.flux;
+    println(e.toString()+"weight ->"+e.weight);
     e.weight = e.weight * pow((float)Math.E, -decayRate * conductivity);
-    */
-    e.display();
+    
+    //display living edges
+    if(e.testDeath(deadEdgeHolding) == false){
+      e.display();
+    }
+    
+    //only use for step
+    /*if((abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate > 0){
+      e.display(0, 255, 0);
+    }
+    else if((abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate < 0){
+      e.display(255, 0, 0);
+    }
+    else{
+      e.display();
+    }*/    
+  }
+  //add new dead edges to their holding list
+  for(Edge e : deadEdgeHolding){
+    edges.remove(e);
+    deadEdges.add(e);
+    println("Dead Edge: "+this.toString());
   }
 }
