@@ -10,7 +10,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
   //decaySystem(0.0015, 1); //TEMP: Animate
-  decaySystem(1); //TEMP: Step
+  decaySystem(0.009); //TEMP: Step
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -22,12 +22,12 @@ void twoPoints(ArrayList<Point> points){
   }
   
   //assign source and sink
-  //source = points.get(p1);
-  //sink = points.get(p2);
-  for(Point p: points){
+  source = points.get(p1);
+  sink = points.get(p2);
+  /*for(Point p: points){
     if(p.name == "C") source = p;
     if(p.name == "A") sink = p;
-  }
+  }*/
   
   source.display(0, 255, 0); //green
   sink.display(0, 0, 255); //blues
@@ -129,23 +129,20 @@ void solveResistorNetwork(ArrayList<Edge> edges){
 }
 
 void decaySystem(float decayRate){
-  float conductivity = 0;
   //calculate change in conductivity for the time step
+  println("\n" + "Decay testing");
   for(Edge e : edges){
-    /*Point greaterFlux, lesserFlux;
-    if(e.p1.flux > e.p2.flux){
-      greaterFlux = e.p1;
-      lesserFlux = e.p2;
-    }
-    else{
-      greaterFlux = e.p2;
-      lesserFlux = e.p1;    
-    }*/
-    //e.weight = 3*(abs(e.p1.flux - e.p2.flux));
-    //conductivity = abs((e.dist/e.weight) * (e.p1.flux - e.p2.flux));
-    println("deltaD->"+e.p1.name+e.p2.name+": "+(abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate);
+    //Additive Decay attempt
+    //e.weight = (abs(e.p1.flux - e.p2.flux));
     e.weight += (abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate;
-   // println("\n");
+    println(e.toString() + " pressure: " + (abs(e.p1.flux - e.p2.flux)));
+    
+    //Multiplicative Decay attempt
+    /*float conductivity = 0;
+    conductivity = abs((e.dist/e.weight) * (e.p1.flux - e.p2.flux));
+    println("deltaD->"+e.p1.name+e.p2.name+": "+(abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate);
+    e.weight = e.weight * pow((float)Math.E, -decayRate * conductivity);
+    */
     e.display();
-  } 
+  }
 }

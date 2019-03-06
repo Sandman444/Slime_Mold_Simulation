@@ -3,6 +3,19 @@ IFButton timeStep, playButton, stopButton, connectButton;
 IFLabel uiLabel, stepLabel, controls, connectLabel;
 IFLookAndFeel defaultLook, playEnabled, playDisabled, stopEnabled, stopDisabled, connectLook;
 
+void drawUI() {
+  fill(255);
+  stroke(255);
+  rect(0, 0, uiSize, height);
+  
+  strokeWeight(2);
+  line(5, 20, uiSize - 5, 20);
+  strokeWeight(1);
+  
+  line(5, 50, uiSize - 5, 50);
+  line(5, 80, uiSize - 5, 80);
+  line(5, 110, uiSize - 5, 110);
+}
 void loadButtons() {
   //GUI Setup
   c = new GUIController(this);
