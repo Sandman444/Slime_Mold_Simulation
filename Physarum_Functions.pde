@@ -9,7 +9,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.09);
+  decaySystem(0.005);
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -28,8 +28,8 @@ void twoPoints(ArrayList<Point> points){
     if(p.name == "A") sink = p;
   }*/
   
-  source.display(0, 255, 0); //green
-  sink.display(0, 0, 255); //blues
+  //source.display(0, 255, 0); //green
+  //sink.display(0, 0, 255); //blues
 }
 
 void solveResistorNetwork(ArrayList<Edge> edges){
@@ -40,13 +40,16 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   *  b : Amount of pressure (only from source node)
   *  x : Amount of current through each edge
   */ 
-  Matrix A, K, At, b, x, v;
+  DMatrixSparseCSC A, K, At, b, x, v;
   println("Size: " + edges.size());
-  A = new Matrix(edges.size(), points.size() - 2);
-  K = new Matrix(edges.size(), edges.size());  
-  v = new Matrix(edges.size(), 1);
-  println("Point Flux Calculations");
+  A = new DMatrixSparseCSC(edges.size(), points.size() - 2);
+  At = new DMatrixSparseCSC(points.size() - 2, edges.size());
+  K = new DMatrixSparseCSC(edges.size(), edges.size());  
+  v = new DMatrixSparseCSC(edges.size(), 1);
+  b = new DMatrixSparseCSC(edges.size(), 1);
+  x = new DMatrixSparseCSC(points.size() - 2, 1);
   
+  println("Point Flux Calculations");
   //Build matrices with a bfs tree starting at the source node
   Queue<Point> queue = new ArrayDeque();
   ArrayList<Point> covered = new ArrayList<Point>();
@@ -81,13 +84,14 @@ void solveResistorNetwork(ArrayList<Edge> edges){
         for(int k = 0; k < orderSize; k++){
           //first edge point
           if(!p.equals(source) && !p.equals(sink)){                  
-            if(p.equals(pointOrder[k])){
+            if(p.equals(pointOrder[k])){ 
               A.set(rowIndex, k, -1);
             }
           }
           //second edge point
           if(!otherPoint.equals(source) && !otherPoint.equals(sink)){
             if(otherPoint.equals(pointOrder[k])){
+              //Error outside index bounds
               A.set(rowIndex, k, 1);
             }
           }
@@ -108,13 +112,25 @@ void solveResistorNetwork(ArrayList<Edge> edges){
     }
     covered.add(p);
   }
+
+
+  //Convert matrices to allow math
   //Set At matrix
-  At = A.transpose();
+  CommonOps_DSCC.transpose(A, At, null);
   //Set b matrix
-  b = (At.times(K)).times(v);
+  DMatrixSparseCSC AtK = new DMatrixSparseCSC(At.getNumRows(), K.getNumCols());
+  CommonOps_DSCC.mult(At, K, AtK);
+  CommonOps_DSCC.mult(AtK, v, b);
   
-  //Solve linear system: At*K*A*x = b  
-  x = ((At.times(K)).times(A)).solve(b);
+  //Solve linear system: At*K*A*x = b
+  DMatrixSparseCSC AtKA = new DMatrixSparseCSC(At.getNumRows(), A.getNumCols());
+  CommonOps_DSCC.mult(AtK, A, AtKA);
+  CommonOps_DSCC.solve(AtKA, b, x);
+  /*println("b");
+  b.print();
+  println("x");
+  x.print();*/
+  
   //assign flux amounts
   source.flux = totalFlux;
   sink.flux = 0;
@@ -132,17 +148,10 @@ void decaySystem(float decayRate){
   println("\n" + "Decay testing");
   
   ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
-  for(Edge e : edges){
-    //Additive Decay attempt
-    //e.weight = (abs(e.p1.flux - e.p2.flux));
-    //e.weight += (abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate;
-   
-    //println(e.toString() + " weight: " + e.weight);
-    //println(e.toString() + " pressure: " + (abs(e.p1.flux - e.p2.flux) - 0.5));
-    
-    //Multiplicative Decay attempt
+  for(Edge e : edges){   
+    //Multiplicative Decay
     float conductivity = 0;
-    conductivity = e.p1.flux - e.p2.flux;
+    conductivity = (e.dist/e.weight)*(e.p1.flux - e.p2.flux);
     println(e.toString()+"weight ->"+e.weight);
     e.weight = e.weight * pow((float)Math.E, -decayRate * conductivity);
     
@@ -150,22 +159,12 @@ void decaySystem(float decayRate){
     if(e.testDeath(deadEdgeHolding) == false){
       e.display();
     }
-    
-    //only use for step
-    /*if((abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate > 0){
-      e.display(0, 255, 0);
-    }
-    else if((abs(e.p1.flux - e.p2.flux) - 0.5) * decayRate < 0){
-      e.display(255, 0, 0);
-    }
-    else{
-      e.display();
-    }*/    
   }
   //add new dead edges to their holding list
   for(Edge e : deadEdgeHolding){
     edges.remove(e);
     deadEdges.add(e);
-    println("Dead Edge: "+this.toString());
+    graph.removeEdge(e);
+    println("Dead Edge: "+e.toString());
   }
 }

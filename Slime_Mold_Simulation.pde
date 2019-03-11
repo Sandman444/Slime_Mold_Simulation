@@ -1,5 +1,4 @@
 import interfascia.*;
-import Jama.*;
 import java.util.*;
 
 static int pointCount = 65;
@@ -18,13 +17,20 @@ void setup(){
   //variables
   uiSize = 150;
   marginSize = 100;
-  numPoints = 20;
-  /*
+  numPoints = 200;
+  /* 
+  Jama
   *100: Smooth
   *200: Slow
   *300: 1 or 2 frames/second
   *400: Error
+  EJML
+  *100: Smooth
+  *200: Smooth
+  *300: breaks processing (to much graphical overhead/ print statements?)
   */
+  
+  
   running = false;
   simulationSpeed = 30;
   
@@ -94,6 +100,7 @@ void draw(){
     for(Point p : points){
       p.display();
     }
+    println(graph.toString());
     pressurizeSystem(points, edges);
     //TEMP: dead edge test
     for(Edge e : deadEdges){
