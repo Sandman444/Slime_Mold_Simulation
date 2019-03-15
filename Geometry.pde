@@ -3,13 +3,13 @@ class Point {
   float x;
   float y;
   String name;
-  float flux;
+  float current;
   
   Point(float x_, float y_){
     x = x_;
     y = y_;
     name = "";
-    flux = 0;
+    current = 0;
   }
   float getX(){
     return x;
@@ -50,19 +50,19 @@ class Point {
 
 //edge storage class
 class Edge {
-  final float initialWeight;
+  final float initialResistance;
   
   Point p1;
   Point p2;
-  float weight;
+  float resistance;
   float dist;
   boolean deadEdge;
   
   Edge(Point p1_, Point p2_){
      p1 = p1_;
      p2 = p2_;
-     initialWeight = 1;
-     weight = initialWeight;
+     initialResistance = 1;
+     resistance = initialResistance;
      deadEdge = false;
      dist = sqrt(sq(p1.x - p2.x) + sq(p1.y - p2.y));
   }
@@ -75,7 +75,7 @@ class Edge {
   }
   Boolean testDeath(ArrayList<Edge> tempEdgeHolder){
     
-    if(weight <= (initialWeight / 2)){
+    if(resistance <= (initialResistance / 2)){
       tempEdgeHolder.add(this);  
        println("\t Kill edge ");
       return true;
@@ -90,13 +90,13 @@ class Edge {
   
   void display(){
     stroke(255);
-    strokeWeight(weight);
+    strokeWeight(resistance);
     line(p1.x, p1.y, p2.x, p2.y);
   }
   
   void display(float r, float g, float b){
     stroke(r, g, b);
-    strokeWeight(weight);
+    strokeWeight(resistance);
     line(p1.x, p1.y, p2.x, p2.y);
   }
   
