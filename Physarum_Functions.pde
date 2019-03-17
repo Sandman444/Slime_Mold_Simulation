@@ -1,7 +1,27 @@
 //single call to pressurize system between a source and a sink node
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
-int totalFlux = 1;
+int voltage = 5;
+
+void drawSystem(){
+  //draw all edges in system
+  for(Edge e : edges){
+    e.display();
+    /*if(e.resistance == 1){
+      e.display();
+    }
+    else if(1 - e.resistance < 0){
+      e.display(0, 255, 0);
+    }
+    else{
+      e.display(255, 0, 0);
+    }*/
+      
+  }
+  for(Edge dead : deadEdges){
+    dead.display(0,0,255);
+  }
+}
 
 void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 1: Set two random points as source and sink
@@ -28,8 +48,8 @@ void twoPoints(ArrayList<Point> points){
     if(p.name == "A") sink = p;
   }*/
   
-  //source.display(0, 255, 0); //green
-  //sink.display(0, 0, 255); //blues
+  source.display(0, 255, 0); //green
+  sink.display(0, 0, 255); //blues
 }
 
 void solveResistorNetwork(ArrayList<Edge> edges){
@@ -49,7 +69,7 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   b = new DMatrixSparseCSC(edges.size(), 1);
   x = new DMatrixSparseCSC(points.size() - 2, 1);
   
-  println("Point Flux Calculations");
+  println("Point current Calculations");
   //Build matrices with a bfs tree starting at the source node
   Queue<Point> queue = new ArrayDeque();
   ArrayList<Point> covered = new ArrayList<Point>();
@@ -97,11 +117,11 @@ void solveResistorNetwork(ArrayList<Edge> edges){
           }
         }
         //Set K value(1/(edge conductivity) in diagonal)
-        K.set(rowIndex, rowIndex, (currEdge.dist/currEdge.weight));
-        //K.set(rowIndex, rowIndex, 1 / currEdge.weight);
+        K.set(rowIndex, rowIndex, (currEdge.resistance/currEdge.dist));
+        //K.set(rowIndex, rowIndex, 1 / currEdge.resistance);
         //Set v value(1 if edge adjecent to source)
         if(p.equals(source)){
-          v.set(rowIndex, 0, totalFlux);
+          v.set(rowIndex, 0, voltage);
         }
         rowIndex++;
       }
@@ -131,15 +151,15 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   println("x");
   x.print();*/
   
-  //assign flux amounts
-  source.flux = totalFlux;
-  sink.flux = 0;
+  //assign current amounts
+  source.current = voltage;
+  sink.current = 0;
   for(int i = 0; i < orderSize; i++){
-    pointOrder[i].flux = (float)x.get(i, 0);
+    pointOrder[i].current = (float)x.get(i, 0);
   }
   println("Point Pressure:");
   for(Point p : points){
-    println(p.toString() + ": "+p.flux);
+    println(p.toString() + ": "+p.current);
   }
 }
 
@@ -150,14 +170,16 @@ void decaySystem(float decayRate){
   ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
   for(Edge e : edges){   
     //Multiplicative Decay
-    float conductivity = 0;
-    conductivity = (e.dist/e.weight)*(e.p1.flux - e.p2.flux);
-    println(e.toString()+"weight ->"+e.weight);
-    e.weight = e.weight * pow((float)Math.E, -decayRate * conductivity);
+    float conductivity  = 0;
+    //e.display((e.resistance/e.dist)*abs(e.p1.current - e.p2.current) * 34000, 0, 0);
+    println("C: "+(e.resistance/e.dist)*abs(e.p1.current - e.p2.current));
+    conductivity = (e.resistance/e.dist)*abs(e.p1.current - e.p2.current);
+    println(e.toString()+"resistance ->"+e.resistance);
+    e.resistance = e.resistance * pow((float)Math.E, -decayRate * conductivity);
     
-    //display living edges
-    if(e.testDeath(deadEdgeHolding) == false){
-      e.display();
+    //test for edge death
+    if(e.testDeath()){
+      deadEdgeHolding.add(e); 
     }
   }
   //add new dead edges to their holding list

@@ -10,14 +10,14 @@ ArrayList<Point> points = new ArrayList<Point>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
-Boolean running;
+Boolean running, step;
 int simulationSpeed;
 
 void setup(){
   //variables
   uiSize = 150;
   marginSize = 100;
-  numPoints = 200;
+  numPoints = 50;
   /* 
   Jama
   *100: Smooth
@@ -32,6 +32,7 @@ void setup(){
   
   
   running = false;
+  step = false;
   simulationSpeed = 30;
   
   //window setup
@@ -76,6 +77,7 @@ void setup(){
   
   //Calculate Delaunay Triangulation
   edges = createDelaunay(points);
+  drawSystem();
   
   //Create Graph adjacency list
   graph = new Graph(points, edges);
@@ -94,18 +96,18 @@ void draw(){
   point(uiSize+5, 5);
   
   //Run simulation
-  if(running ==true){
+  if(running ==true || step == true){
     clear();
-    drawUI();
+    drawUI(); //UI_Elements
+    //drawSystem(); //Physarum_Functions
     for(Point p : points){
       p.display();
     }
     println(graph.toString());
     pressurizeSystem(points, edges);
-    //TEMP: dead edge test
-    for(Edge e : deadEdges){
-      e.display(255,0,0);
-    }
+    drawSystem();
+    
+    if(step == true) step = false;
   }
 }
 

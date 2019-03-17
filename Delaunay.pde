@@ -28,7 +28,6 @@ ArrayList<Edge> createDelaunay(ArrayList<Point> points){
     }
     Edge edge = new Edge(p1, p2);
     edges.add(edge);
-    edge.display(255, 0, 0);
   }
   
   return edges;

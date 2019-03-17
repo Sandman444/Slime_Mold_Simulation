@@ -88,11 +88,7 @@ void loadButtons() {
 
 void actionPerformed(GUIEvent e){
   if(e.getSource() == timeStep){
-    println("source");
-    for(Point p : points){
-      p.display();
-    }
-    pressurizeSystem(points, edges);
+    step = true;
   }
   else if(e.getSource() == playButton){
     running = true;
