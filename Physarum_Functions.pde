@@ -3,6 +3,22 @@ Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
 int voltage = 1;
 
+void drawSystem(){
+  //draw all edges in system
+  for(Edge e : edges){
+    if(1 - e.resistance < 0){
+      e.display(0, 255, 0);
+    }
+    else{
+      e.display(255, 0, 0);
+    }
+      
+  }
+  for(Edge dead : deadEdges){
+    dead.display(0,0,255);
+  }
+}
+
 void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 1: Set two random points as source and sink
   twoPoints(points);
@@ -155,9 +171,9 @@ void decaySystem(float decayRate){
     println(e.toString()+"resistance ->"+e.resistance);
     e.resistance = e.resistance * pow((float)Math.E, -decayRate * conductivity);
     
-    //display living edges
-    if(e.testDeath(deadEdgeHolding) == false){
-      e.display();
+    //test for edge death
+    if(e.testDeath()){
+      deadEdgeHolding.add(e); 
     }
   }
   //add new dead edges to their holding list

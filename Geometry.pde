@@ -73,10 +73,9 @@ class Edge {
     else
       return false;
   }
-  Boolean testDeath(ArrayList<Edge> tempEdgeHolder){
+  Boolean testDeath(){
     
     if(resistance <= (initialResistance / 2)){
-      tempEdgeHolder.add(this);  
        println("\t Kill edge ");
       return true;
     }
