@@ -77,6 +77,7 @@ void setup(){
   
   //Calculate Delaunay Triangulation
   edges = createDelaunay(points);
+  drawSystem();
   
   //Create Graph adjacency list
   graph = new Graph(points, edges);
@@ -98,12 +99,14 @@ void draw(){
   if(running ==true || step == true){
     clear();
     drawUI(); //UI_Elements
+    //drawSystem(); //Physarum_Functions
     for(Point p : points){
       p.display();
     }
     println(graph.toString());
     pressurizeSystem(points, edges);
-    drawSystem(); //Physarum_Functions
+    drawSystem();
+    
     if(step == true) step = false;
   }
 }

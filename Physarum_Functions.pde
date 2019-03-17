@@ -1,17 +1,21 @@
 //single call to pressurize system between a source and a sink node
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
-int voltage = 1;
+int voltage = 5;
 
 void drawSystem(){
   //draw all edges in system
   for(Edge e : edges){
-    if(1 - e.resistance < 0){
+    e.display();
+    /*if(e.resistance == 1){
+      e.display();
+    }
+    else if(1 - e.resistance < 0){
       e.display(0, 255, 0);
     }
     else{
       e.display(255, 0, 0);
-    }
+    }*/
       
   }
   for(Edge dead : deadEdges){
@@ -44,8 +48,8 @@ void twoPoints(ArrayList<Point> points){
     if(p.name == "A") sink = p;
   }*/
   
-  //source.display(0, 255, 0); //green
-  //sink.display(0, 0, 255); //blues
+  source.display(0, 255, 0); //green
+  sink.display(0, 0, 255); //blues
 }
 
 void solveResistorNetwork(ArrayList<Edge> edges){
@@ -113,7 +117,7 @@ void solveResistorNetwork(ArrayList<Edge> edges){
           }
         }
         //Set K value(1/(edge conductivity) in diagonal)
-        K.set(rowIndex, rowIndex, (currEdge.dist/currEdge.resistance));
+        K.set(rowIndex, rowIndex, (currEdge.resistance/currEdge.dist));
         //K.set(rowIndex, rowIndex, 1 / currEdge.resistance);
         //Set v value(1 if edge adjecent to source)
         if(p.equals(source)){
@@ -167,7 +171,9 @@ void decaySystem(float decayRate){
   for(Edge e : edges){   
     //Multiplicative Decay
     float conductivity  = 0;
-    conductivity = (e.dist/e.resistance)*(e.p1.current - e.p2.current);
+    //e.display((e.resistance/e.dist)*abs(e.p1.current - e.p2.current) * 34000, 0, 0);
+    println("C: "+(e.resistance/e.dist)*abs(e.p1.current - e.p2.current));
+    conductivity = (e.resistance/e.dist)*abs(e.p1.current - e.p2.current);
     println(e.toString()+"resistance ->"+e.resistance);
     e.resistance = e.resistance * pow((float)Math.E, -decayRate * conductivity);
     
