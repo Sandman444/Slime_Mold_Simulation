@@ -7,7 +7,7 @@ void drawSystem(){
   //draw all edges in system
   for(Edge e : edges){
     //e.display();
-    if(e.resistance == 1){
+    /*if(e.resistance == 1){
       e.display();
     }
     else if(1 - e.resistance < 0){
@@ -15,7 +15,7 @@ void drawSystem(){
     }
     else{
       e.display(0, 255, 0);
-    }
+    }*/
       
   }
   for(Edge dead : deadEdges){
