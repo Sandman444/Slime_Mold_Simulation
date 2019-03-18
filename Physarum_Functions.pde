@@ -168,6 +168,7 @@ void decaySystem(float decayRate){
   println("\n" + "Decay testing");
   
   ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
+  float totalResistance = 0;
   for(Edge e : edges){   
     //Multiplicative Decay
     float conductivity  = 0;
@@ -176,12 +177,23 @@ void decaySystem(float decayRate){
     conductivity = (e.resistance/e.dist)*abs(e.p1.current - e.p2.current);
     println(e.toString()+"resistance ->"+e.resistance);
     e.resistance = e.resistance * pow((float)Math.E, -decayRate * conductivity);
+    totalResistance += e.resistance;
     
     //test for edge death
     if(e.testDeath()){
       deadEdgeHolding.add(e); 
     }
   }
+  normalizeText.println("Total Resistance: " + totalResistance);
+  normalizeText.println(" #edges: " + edges.size());
+  
+  float test = 0;
+  for(Edge e : edges){
+    e.resistance = edges.size() * (e.resistance / totalResistance);
+    test += e.resistance;
+  }
+  normalizeText.println(" test: " + test);
+  normalizeText.flush();
   //add new dead edges to their holding list
   for(Edge e : deadEdgeHolding){
     edges.remove(e);

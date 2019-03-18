@@ -12,6 +12,7 @@ ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
+PrintWriter normalizeText;
 
 void setup(){
   //variables
@@ -39,6 +40,9 @@ void setup(){
   size(750, 600);
    background(0);
    frameRate(simulationSpeed);
+   
+   //initialize PrintWriters
+   normalizeText = createWriter("normalize.txt");
    
   //UI Setup
   fill(255); 
