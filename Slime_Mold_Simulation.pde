@@ -6,19 +6,21 @@ static int pointCount = 65;
 int uiSize;
 int marginSize;
 int numPoints;
+int stepCount;
 ArrayList<Point> points = new ArrayList<Point>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
-PrintWriter normalizeText;
+PrintWriter normalizeText, pointCurrent, resistancesText;
 
 void setup(){
   //variables
   uiSize = 150;
   marginSize = 100;
   numPoints = 50;
+  stepCount = 0;
   /* 
   Jama
   *100: Smooth
@@ -43,6 +45,8 @@ void setup(){
    
    //initialize PrintWriters
    normalizeText = createWriter("normalize.txt");
+   pointCurrent = createWriter("point_current.txt");
+   resistancesText = createWriter("resistances.txt");
    
   //UI Setup
   fill(255); 

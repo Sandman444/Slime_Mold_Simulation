@@ -75,7 +75,7 @@ class Edge {
   }
   Boolean testDeath(){
     
-    if(resistance <= (initialResistance / 2)){
+    if(resistance <= (1.25)){
        println("\t Kill edge ");
       return true;
     }
