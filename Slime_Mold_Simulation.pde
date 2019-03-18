@@ -1,12 +1,11 @@
 import interfascia.*;
 import java.util.*;
 
-static int pointCount = 65;
-
 int uiSize;
 int marginSize;
 int numPoints;
 int stepCount;
+static float initialSystemResistance;
 ArrayList<Point> points = new ArrayList<Point>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Edge> deadEdges = new ArrayList<Edge>();
@@ -73,8 +72,7 @@ void setup(){
   //Default Points
   for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
-    p.setName(Character.toString((char) pointCount));
-    pointCount++;
+    //p.setName(Character.toString((char) i));
     points.add(p);
   }
   
@@ -89,6 +87,7 @@ void setup(){
   
   //Create Graph adjacency list
   graph = new Graph(points, edges);
+  initialSystemResistance = edges.size();
   println(graph.toString());  
 }
 

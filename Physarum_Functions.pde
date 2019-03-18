@@ -29,7 +29,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.05);
+  decaySystem(0.03);
   
   stepCount++;
 }
