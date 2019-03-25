@@ -117,25 +117,51 @@ void actionPerformed(GUIEvent event){
       first.name = "first";
  
       //find closest point that is adjacent to closest
-      ArrayList<Point> adjacent = graph.getList(first);
+      ArrayList<Point> firstAdjacent = graph.getList(first);
       Point second = points.get(0);
       dist = dist(p.x, p.y, second.x, second.y);
-      for(int i = 1; i < adjacent.size(); i++){
-        Point nextPoint = adjacent.get(i);
+      for(int i = 1; i < firstAdjacent.size(); i++){
+        Point nextPoint = firstAdjacent.get(i);
         float nextDist = dist(p.x, p.y,nextPoint.x, nextPoint.y);
         if(dist > nextDist){
-          first = nextPoint;
+          second = nextPoint;
           dist = nextDist;
         }
       }
       second.name = "second";
+      
+      //find corner of the triangle
+      ArrayList<Point> secondAdjacent = graph.getList(second);
+      Point third = new Point(0, 0);
+      boolean insideTriangle = true;
+      for(int i = 0; i < firstAdjacent.size(); i++){
+        for(int j = 0; j < secondAdjacent.size(); j++){
+          if(firstAdjacent.get(i).equals(secondAdjacent.get(j))){
+            third = secondAdjacent.get(j);
+            insideTriangle = false;
+            third.name = "third";       
+            break;
+          }
+        }
+      }
+      
       
       //create the edges
       Edge e1 = new Edge(p, first);
       Edge e2 = new Edge(p, second);
       edges.add(e1);
       edges.add(e2);
+      if(!insideTriangle){ //only add if inside a triangle
+        Edge e3 = new Edge(p, third);
+        edges.add(e3);
+      }
+      
+      //add point
+      points.add(p);
+      
+      //NOTE: Still need to add the edges and new point to the graph
     }
+    pointsToAdd.clear();
     graph.refresh();
   }
 }
