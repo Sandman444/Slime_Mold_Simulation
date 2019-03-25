@@ -7,12 +7,13 @@ int numPoints;
 int stepCount;
 static float initialSystemResistance;
 ArrayList<Point> points = new ArrayList<Point>();
+ArrayList<Point> pointsToAdd = new ArrayList<Point>();
 ArrayList<Edge> edges = new ArrayList<Edge>();
 ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
-PrintWriter normalizeText, pointCurrent, resistancesText;
+PrintWriter normalizeText, pointVoltage, resistancesText;
 
 void setup(){
   //variables
@@ -35,7 +36,7 @@ void setup(){
   
   running = false;
   step = false;
-  simulationSpeed = 30;
+  simulationSpeed = 5;
   
   //window setup
   size(750, 600);
@@ -44,7 +45,7 @@ void setup(){
    
    //initialize PrintWriters
    normalizeText = createWriter("normalize.txt");
-   pointCurrent = createWriter("point_current.txt");
+   pointVoltage = createWriter("point_voltage.txt");
    resistancesText = createWriter("resistances.txt");
    
   //UI Setup
@@ -53,7 +54,7 @@ void setup(){
   loadButtons();
   
   //Test Points
-  /*Point p1 = new Point(250, 150);
+  Point p1 = new Point(250, 150);
   p1.setName("A");
   points.add(p1);
   Point p2 = new Point(400, 150);
@@ -67,14 +68,14 @@ void setup(){
   points.add(p4);
   Point p5 = new Point(300, 400);
   p5.setName("E");
-  points.add(p5);*/
+  points.add(p5);
   
   //Default Points
-  for(int i = 0; i < numPoints; i++){
+  /*for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
     //p.setName(Character.toString((char) i));
     points.add(p);
-  }
+  }*/
   
   //Draw Default Points
   for(Point p : points){
@@ -106,13 +107,15 @@ void draw(){
   if(running ==true || step == true){
     clear();
     drawUI(); //UI_Elements
-    //drawSystem(); //Physarum_Functions
     for(Point p : points){
+      p.display();
+    }
+    for(Point p : pointsToAdd){
       p.display();
     }
     println(graph.toString());
     pressurizeSystem(points, edges);
-    drawSystem();
+    drawSystem(); //draw edges in system
     
     if(step == true) step = false;
   }
@@ -121,7 +124,7 @@ void draw(){
 void mouseClicked(){
   if(mouseX > uiSize){
     Point p = new Point(mouseX, mouseY);
-    points.add(p);
+    pointsToAdd.add(p);
     p.display();
   }
 }

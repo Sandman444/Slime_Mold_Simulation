@@ -1,22 +1,22 @@
 //single call to pressurize system between a source and a sink node
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
-int voltage = 1;
+int sourceVoltage = 1;
 
 void drawSystem(){
   //draw all edges in system
   for(Edge e : edges){
     //e.display();
-    if(e.resistance == 1){
-      e.display();
-    }
-    else if(1 - e.resistance < 0){
-      e.display(255, 0, 0);
-    }
-    else{
+    //TEMP: colour growing green and decaying red
+    if(e.prevR > e.resistance){
       e.display(0, 255, 0);
     }
-      
+    else if(e.prevR < e.resistance){
+      e.display(255, 0, 0);
+    }
+    else { //starts as white
+      e.display();
+    }    
   }
   for(Edge dead : deadEdges){
     dead.display(0,0,255);
@@ -24,12 +24,14 @@ void drawSystem(){
 }
 
 void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
+  
+  
   //Step 1: Set two random points as source and sink
   twoPoints(points);
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.03);
+  decaySystem(0.1);
   
   stepCount++;
 }
@@ -60,7 +62,7 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   *  At: Transpose of A
   *  K : Diagonal matrix of the edge resistances
   *  b : Amount of pressure (only from source node)
-  *  x : Amount of current through each edge
+  *  x : Amount of voltage through each edge
   */ 
   DMatrixSparseCSC A, K, At, b, x, v;
   println("Size: " + edges.size());
@@ -71,7 +73,7 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   b = new DMatrixSparseCSC(edges.size(), 1);
   x = new DMatrixSparseCSC(points.size() - 2, 1);
   
-  println("Point current Calculations");
+  println("Point voltage Calculations");
   //Build matrices with a bfs tree starting at the source node
   Queue<Point> queue = new ArrayDeque();
   ArrayList<Point> covered = new ArrayList<Point>();
@@ -92,9 +94,9 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   //build matrices
   while(!queue.isEmpty()){
     Point p = queue.remove();
-    //println("Current: "+ p.toString());
+    //println("voltage: "+ p.toString());
     int i = graph.findList(p);
-    //iterate through current point's adjacency list
+    //iterate through voltage point's adjacency list
     for(int j = 1; j < graph.get(i).size(); j++){      
       Point otherPoint = graph.get(i, j);
       Edge currEdge = graph.getEdge(p, graph.get(i, j));
@@ -119,11 +121,10 @@ void solveResistorNetwork(ArrayList<Edge> edges){
           }
         }
         //Set K value(1/(edge conductivity) in diagonal)
-        K.set(rowIndex, rowIndex, (currEdge.resistance/currEdge.dist));
-        //K.set(rowIndex, rowIndex, 1 / currEdge.resistance);
+        K.set(rowIndex, rowIndex, 1 / currEdge.resistance);
         //Set v value(1 if edge adjecent to source)
         if(p.equals(source)){
-          v.set(rowIndex, 0, voltage);
+          v.set(rowIndex, 0, sourceVoltage);
         }
         rowIndex++;
       }
@@ -153,18 +154,18 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   println("x");
   x.print();*/
   
-  //assign current amounts
-  source.current = voltage;
-  sink.current = 0;
+  //assign voltage amounts
+  source.voltage = sourceVoltage;
+  sink.voltage = 0;
   for(int i = 0; i < orderSize; i++){
-    pointOrder[i].current = (float)x.get(i, 0);
+    pointOrder[i].voltage = (float)x.get(i, 0);
   }
-  pointCurrent.println("\n Step: " + stepCount);
+  pointVoltage.println("\n Step: " + stepCount);
   for(Point p : points){
-    println(p.toString() + ": "+p.current);
-    pointCurrent.println("  " + p.toString() + ": "+p.current);
+    println(p.toString() + ": "+p.voltage);
+    pointVoltage.println("  " + p.toString() + ": "+p.voltage);
   }
-  pointCurrent.flush();
+  pointVoltage.flush();
 }
 
 void decaySystem(float decayRate){
@@ -172,34 +173,40 @@ void decaySystem(float decayRate){
   println("\n" + "Decay testing");
   
   ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
-  float totalResistance = 0;
+  float totalConductivity = 0;
+
   for(Edge e : edges){   
+    normalizeText.print("(" + e.dist/e.resistance + ") ");
+    e.prevR = e.resistance;
     //Multiplicative Decay
-    float conductivity  = 0;
-    e.display((e.resistance/e.dist)*abs(e.p1.current - e.p2.current) * 34000, 0, 0);
-    //println("C: "+(e.resistance/e.dist)*abs(e.p1.current - e.p2.current));
-    conductivity = 100*(e.resistance/e.dist)*abs(e.p1.current - e.p2.current);
-    e.resistance = e.resistance * pow((float)Math.E, -decayRate * conductivity);
-    println("Initial R: "+e.resistance);
-    totalResistance += e.resistance;
+    float current  = 0;
+    current = abs(e.p1.voltage - e.p2.voltage) / e.resistance;
+    e.resistance = e.resistance * pow((float)Math.E, -decayRate * current);
+    totalConductivity += 1/e.resistance;
+    
+    normalizeText.print(e.dist/e.resistance + " + ");
     
     //test for edge death
-    if(e.testDeath()){
+    /*if(e.testDeath()){
       deadEdgeHolding.add(e); 
-    }
+    }*/
   }
-  normalizeText.println("Total Resistance: " + totalResistance);
-  normalizeText.println(" #edges: " + edges.size());
   
-  float test = 0;
-  resistancesText.println("\n Step: " + stepCount);
+  normalizeText.println("= 1/" + totalConductivity);
+  
   for(Edge e : edges){
-    e.resistance = edges.size() * (e.resistance / totalResistance);
-    resistancesText.println(e.toString()+"resistance ->"+e.resistance);
-    println(e.toString()+"resistance ->"+e.resistance);
-    test += e.resistance;
+    float conductance = 1 / e.resistance;
+     
+    //normalize conductance to initial graph conductance
+    conductance = (conductance / totalConductivity) * graph.totalGraphConductance;
+    e.resistance = 1 / conductance;
+    
+    println("Weight " + e.toString() + "-> " + conductance); 
+    
+    normalizeText.print(conductance * e.dist + " + ");
   }
-  normalizeText.println(" test: " + test);
+
+  normalizeText.println("= 1/" + graph.totalGraphConductance);  
   normalizeText.flush();
   resistancesText.flush();
   

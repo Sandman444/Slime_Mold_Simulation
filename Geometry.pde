@@ -3,13 +3,13 @@ class Point {
   float x;
   float y;
   String name;
-  float current;
+  float voltage;
   
   Point(float x_, float y_){
     x = x_;
     y = y_;
     name = "";
-    current = 0;
+    voltage = 0;
   }
   float getX(){
     return x;
@@ -26,7 +26,7 @@ class Point {
     stroke(255);
     strokeWeight(8);
     point(x, y);
-    //text(name, x+10, y-10);
+    text(name, x+10, y-10);
   }
   void display(float r, float g, float b){
     stroke(r, g, b);
@@ -55,16 +55,19 @@ class Edge {
   Point p1;
   Point p2;
   float resistance;
+  float prevR;
   float dist;
-  boolean deadEdge;
+  boolean deadEdge, growing;
   
   Edge(Point p1_, Point p2_){
      p1 = p1_;
      p2 = p2_;
-     initialResistance = 1;
-     resistance = initialResistance;
-     deadEdge = false;
      dist = sqrt(sq(p1.x - p2.x) + sq(p1.y - p2.y));
+     initialResistance = dist;
+     resistance = initialResistance;
+     prevR = resistance;
+     deadEdge = false;
+     growing = false;
   }
   
   Boolean equals(Edge e){
@@ -89,13 +92,13 @@ class Edge {
   
   void display(){
     stroke(255);
-    strokeWeight(resistance);
+    strokeWeight(2*(dist/resistance));
     line(p1.x, p1.y, p2.x, p2.y);
   }
   
   void display(float r, float g, float b){
     stroke(r, g, b);
-    strokeWeight(resistance);
+    strokeWeight(2*(dist/resistance));
     line(p1.x, p1.y, p2.x, p2.y);
   }
   
@@ -108,6 +111,8 @@ class Edge {
 class Graph {  
   ArrayList<ArrayList<Point>> graph = new ArrayList<ArrayList<Point>>();
   
+  float totalGraphConductance;
+  
     Graph(ArrayList<Point> points, ArrayList<Edge> edges){      
       for(Point p : points){
         graph.add(new ArrayList<Point>());
@@ -116,7 +121,9 @@ class Graph {
       for(Edge e : edges){   
         graph.get(findList(e.p1)).add(e.p2);
         graph.get(findList(e.p2)).add(e.p1);
+        totalGraphConductance += 1 / e.dist;
       }
+      println("Total Conductance: 1/" + 1/totalGraphConductance);
     }
     
     boolean containsPoint(Point p){
@@ -137,6 +144,15 @@ class Graph {
         }
       }
       return index;
+    }
+    
+    ArrayList<Point> getList(Point p){
+      for(int i = 0; i < graph.size(); i++){
+        if(p.equals(graph.get(i).get(0))){
+          return graph.get(i);
+        }
+      }
+      return new ArrayList<Point>();
     }
     
     ArrayList<Point> get(int i){

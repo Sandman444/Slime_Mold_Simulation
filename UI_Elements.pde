@@ -86,22 +86,56 @@ void loadButtons() {
   connectButton.setLookAndFeel(connectLook);
 }
 
-void actionPerformed(GUIEvent e){
-  if(e.getSource() == timeStep){
+void actionPerformed(GUIEvent event){
+  if(event.getSource() == timeStep){
     step = true;
   }
-  else if(e.getSource() == playButton){
+  else if(event.getSource() == playButton){
     running = true;
     playButton.setLookAndFeel(playEnabled);
     stopButton.setLookAndFeel(stopDisabled);
   }
-  else if(e.getSource() == stopButton){
+  else if(event.getSource() == stopButton){
     running = false;
     stopButton.setLookAndFeel(stopEnabled);
     playButton.setLookAndFeel(playDisabled);
   }
-  else if(e.getSource() == connectButton){
+  else if(event.getSource() == connectButton){
     edges = createDelaunay(points);//likely adding double edges need to fix
+    for(Point p : pointsToAdd){
+      //find closest point
+      Point first = points.get(0);
+      float dist = dist(p.x, p.y, first.x, first.y);
+      for(int i = 1; i < points.size(); i++){
+        Point nextPoint = points.get(i);
+        float nextDist = dist(p.x, p.y,nextPoint.x, nextPoint.y);
+        if(dist > nextDist){
+          first = nextPoint;
+          dist = nextDist;
+        }
+      }
+      first.name = "first";
+ 
+      //find closest point that is adjacent to closest
+      ArrayList<Point> adjacent = graph.getList(first);
+      Point second = points.get(0);
+      dist = dist(p.x, p.y, second.x, second.y);
+      for(int i = 1; i < adjacent.size(); i++){
+        Point nextPoint = adjacent.get(i);
+        float nextDist = dist(p.x, p.y,nextPoint.x, nextPoint.y);
+        if(dist > nextDist){
+          first = nextPoint;
+          dist = nextDist;
+        }
+      }
+      second.name = "second";
+      
+      //create the edges
+      Edge e1 = new Edge(p, first);
+      Edge e2 = new Edge(p, second);
+      edges.add(e1);
+      edges.add(e2);
+    }
     graph.refresh();
   }
 }
