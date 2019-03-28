@@ -135,6 +135,15 @@ class Graph {
     return false;
   }
   
+  boolean containsEdge(Edge inEdge){
+    for(Edge e : edges){
+      if((e.p1 == inEdge.p1 && e.p2 == inEdge.p2)  || e.p1 == inEdge.p2 && e.p2 == inEdge.p1){
+        return true;
+      }
+    }
+    return false;
+  }
+  
   int findList(Point p){
     int index = 0;
     for(int i = 0; i < graph.size(); i++){

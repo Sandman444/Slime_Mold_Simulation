@@ -110,9 +110,10 @@ void actionPerformed(GUIEvent event){
     pointsToAdd.clear();
     delaunayOutput = createDelaunay(points);
     for(Edge e : delaunayOutput){
-      if(!edges.contains(e)){
+      if(!graph.containsEdge(e)){
         edges.add(e);
         graph.addEdge(e);
+        e.display(125, 125, 0);
       }
     }
     println(graph.toString());
