@@ -101,67 +101,20 @@ void actionPerformed(GUIEvent event){
     playButton.setLookAndFeel(playDisabled);
   }
   else if(event.getSource() == connectButton){
-    edges = createDelaunay(points);//likely adding double edges need to fix
+    ArrayList<Edge> delaunayOutput;
+    //add all points to add to graph
+    points.addAll(pointsToAdd);
     for(Point p : pointsToAdd){
-      //find closest point
-      Point first = points.get(0);
-      float dist = dist(p.x, p.y, first.x, first.y);
-      for(int i = 1; i < points.size(); i++){
-        Point nextPoint = points.get(i);
-        float nextDist = dist(p.x, p.y,nextPoint.x, nextPoint.y);
-        if(dist > nextDist){
-          first = nextPoint;
-          dist = nextDist;
-        }
-      }
-      first.name = "first";
- 
-      //find closest point that is adjacent to closest
-      ArrayList<Point> firstAdjacent = graph.getList(first);
-      Point second = points.get(0);
-      dist = dist(p.x, p.y, second.x, second.y);
-      for(int i = 1; i < firstAdjacent.size(); i++){
-        Point nextPoint = firstAdjacent.get(i);
-        float nextDist = dist(p.x, p.y,nextPoint.x, nextPoint.y);
-        if(dist > nextDist){
-          second = nextPoint;
-          dist = nextDist;
-        }
-      }
-      second.name = "second";
-      
-      //find corner of the triangle
-      ArrayList<Point> secondAdjacent = graph.getList(second);
-      Point third = new Point(0, 0);
-      boolean insideTriangle = true;
-      for(int i = 0; i < firstAdjacent.size(); i++){
-        for(int j = 0; j < secondAdjacent.size(); j++){
-          if(firstAdjacent.get(i).equals(secondAdjacent.get(j))){
-            third = secondAdjacent.get(j);
-            insideTriangle = false;
-            third.name = "third";       
-            break;
-          }
-        }
-      }
-      
-      
-      //create the edges
-      Edge e1 = new Edge(p, first);
-      Edge e2 = new Edge(p, second);
-      edges.add(e1);
-      edges.add(e2);
-      if(!insideTriangle){ //only add if inside a triangle
-        Edge e3 = new Edge(p, third);
-        edges.add(e3);
-      }
-      
-      //add point
-      points.add(p);
-      
-      //NOTE: Still need to add the edges and new point to the graph
+      graph.addPoint(p);
     }
     pointsToAdd.clear();
-    graph.refresh();
+    delaunayOutput = createDelaunay(points);
+    for(Edge e : delaunayOutput){
+      if(!edges.contains(e)){
+        edges.add(e);
+        graph.addEdge(e);
+      }
+    }
+    println(graph.toString());
   }
 }

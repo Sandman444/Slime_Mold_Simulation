@@ -113,91 +113,101 @@ class Graph {
   
   float totalGraphConductance;
   
-    Graph(ArrayList<Point> points, ArrayList<Edge> edges){      
-      for(Point p : points){
-        graph.add(new ArrayList<Point>());
-        graph.get(graph.size()-1).add(p);
-      }
-      for(Edge e : edges){   
-        graph.get(findList(e.p1)).add(e.p2);
-        graph.get(findList(e.p2)).add(e.p1);
-        totalGraphConductance += 1 / e.dist;
-      }
-      println("Total Conductance: 1/" + 1/totalGraphConductance);
+  Graph(ArrayList<Point> points, ArrayList<Edge> edges){      
+    for(Point p : points){
+      graph.add(new ArrayList<Point>());
+      graph.get(graph.size()-1).add(p);
     }
+    for(Edge e : edges){   
+      graph.get(findList(e.p1)).add(e.p2);
+      graph.get(findList(e.p2)).add(e.p1);
+      totalGraphConductance += 1 / e.dist;
+    }
+    println("Total Conductance: 1/" + 1/totalGraphConductance);
+  }
+  
+  boolean containsPoint(Point p){
+    for(int i = 0; i < graph.size(); i++){
+      if(graph.get(i).get(0) == p){
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  int findList(Point p){
+    int index = 0;
+    for(int i = 0; i < graph.size(); i++){
+      if(p.equals(graph.get(i).get(0))){
+        index = i;
+        break;
+      }
+    }
+    return index;
+  }
+  
+  ArrayList<Point> getList(Point p){
+    for(int i = 0; i < graph.size(); i++){
+      if(p.equals(graph.get(i).get(0))){
+        return graph.get(i);
+      }
+    }
+    return new ArrayList<Point>();
+  }
+  
+  ArrayList<Point> get(int i){
+    return graph.get(i);
+  }
+  Point get(int i, int j){
+    return graph.get(i).get(j);
+  }
+  
+  Edge getEdge(Point p1, Point p2){
+    for(Edge e : edges){
+      if(p1 == e.p1 && p2 == e.p2 || p2 == e.p1 && p1 == e.p2)
+        return e;
+    }
+    return new Edge(new Point(0, 0), new Point(0, 0));
+  }
+  
+  String toString(){
+    String str = "Graph: \n";
+    for(int i = 0; i < graph.size(); i++){        
+      str += printList(i);
+      str += "\t\n";
+    }
+    return str;
+  }   
+  String printList(int list){
+    String str = graph.get(list).get(0).toString() + " -> ";
+    for(int i = 1; i < graph.get(list).size(); i++){        
+      str += graph.get(list).get(i).toString() + ", ";
+    }
+    return str;
+  }
+  
+  void refresh(){
     
-    boolean containsPoint(Point p){
-      for(int i = 0; i < graph.size(); i++){
-        if(graph.get(i).get(0) == p){
-          return true;
-        }
-      }
-      return false;
+    for(Point p : points){
+      p.display();
     }
-    
-    int findList(Point p){
-      int index = 0;
-      for(int i = 0; i < graph.size(); i++){
-        if(p.equals(graph.get(i).get(0))){
-          index = i;
-          break;
-        }
-      }
-      return index;
+    for(Edge e : edges){
+      e.display(0, 255, 0);
     }
-    
-    ArrayList<Point> getList(Point p){
-      for(int i = 0; i < graph.size(); i++){
-        if(p.equals(graph.get(i).get(0))){
-          return graph.get(i);
-        }
-      }
-      return new ArrayList<Point>();
-    }
-    
-    ArrayList<Point> get(int i){
-      return graph.get(i);
-    }
-    Point get(int i, int j){
-      return graph.get(i).get(j);
-    }
-    
-    Edge getEdge(Point p1, Point p2){
-      for(Edge e : edges){
-        if(p1 == e.p1 && p2 == e.p2 || p2 == e.p1 && p1 == e.p2)
-          return e;
-      }
-      return new Edge(new Point(0, 0), new Point(0, 0));
-    }
-    
-    String toString(){
-      String str = "Graph: \n";
-      for(int i = 0; i < graph.size(); i++){        
-        str += printList(i);
-        str += "\t\n";
-      }
-      return str;
-    }   
-    String printList(int list){
-      String str = graph.get(list).get(0).toString() + " -> ";
-      for(int i = 1; i < graph.get(list).size(); i++){        
-        str += graph.get(list).get(i).toString() + ", ";
-      }
-      return str;
-    }
-    
-    void refresh(){
-      
-      for(Point p : points){
-        p.display();
-      }
-      for(Edge e : edges){
-        e.display(0, 255, 0);
-      }
-    }
-    
-    void removeEdge(Edge e){
-      graph.get(findList(e.p1)).remove(e.p2);
-      graph.get(findList(e.p2)).remove(e.p1);
-    }
+  }
+  
+  void removeEdge(Edge e){
+    graph.get(findList(e.p1)).remove(e.p2);
+    graph.get(findList(e.p2)).remove(e.p1);
+  }
+  
+  void addPoint(Point p){
+    graph.add(new ArrayList<Point>());
+    graph.get(graph.size()-1).add(p);
+  }
+  
+  void addEdge(Edge e){
+      graph.get(findList(e.p1)).add(e.p2);
+      graph.get(findList(e.p2)).add(e.p1);
+  }
 }
