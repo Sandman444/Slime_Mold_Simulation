@@ -31,7 +31,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.1);
+  decaySystem(0.01);
   
   stepCount++;
 }
@@ -185,11 +185,6 @@ void decaySystem(float decayRate){
     totalConductivity += 1/e.resistance;
     
     normalizeText.print(e.dist/e.resistance + " + ");
-    
-    //test for edge death
-    /*if(e.testDeath()){
-      deadEdgeHolding.add(e); 
-    }*/
   }
   
   normalizeText.println("= 1/" + totalConductivity);
@@ -201,9 +196,12 @@ void decaySystem(float decayRate){
     conductance = (conductance / totalConductivity) * graph.totalGraphConductance;
     e.resistance = 1 / conductance;
     
-    println("Weight " + e.toString() + "-> " + conductance); 
-    
     normalizeText.print(conductance * e.dist + " + ");
+    
+    //test for edge death
+    if(e.testDeath()){
+      deadEdgeHolding.add(e); 
+    }
   }
 
   normalizeText.println("= 1/" + graph.totalGraphConductance);  

@@ -57,6 +57,7 @@ class Edge {
   float resistance;
   float prevR;
   float dist;
+  float lifeRange;
   boolean deadEdge, growing;
   
   Edge(Point p1_, Point p2_){
@@ -68,6 +69,7 @@ class Edge {
      prevR = resistance;
      deadEdge = false;
      growing = false;
+     lifeRange = 5;
   }
   
   Boolean equals(Edge e){
@@ -77,8 +79,16 @@ class Edge {
       return false;
   }
   Boolean testDeath(){
-    
-    if(resistance >= (1.25)){
+    if(stepCount > 10 && stepCount < 100){
+      lifeRange = 3;
+    }
+    else if(stepCount > 100){
+      lifeRange = 2;
+    }
+    float averageConductance = graph.totalGraphConductance / edges.size();
+    float conductanceFactor = averageConductance / (1/resistance);
+    println(toString() + ": " + averageConductance / (1/resistance) + " ("+ lifeRange + ")"); 
+    if(conductanceFactor >= (1+lifeRange)){
        println("\t Kill edge ");
       return true;
     }
@@ -92,15 +102,29 @@ class Edge {
   
   void display(){
     stroke(255);
-    strokeWeight(2*(dist/resistance));
+    strokeWeight(1);
     line(p1.x, p1.y, p2.x, p2.y);
   }
-  
   void display(float r, float g, float b){
+    stroke(r, g, b);
+    float averageConductance = graph.totalGraphConductance / edges.size();
+    float conductanceFactor = averageConductance / (1/resistance);
+    if(conductanceFactor < 1){
+      strokeWeight((1 - ((conductanceFactor - 1) / lifeRange)));
+    }
+    else if (conductanceFactor > 1 && (conductanceFactor - 1) / lifeRange < 1){     
+      strokeWeight((1 + ((1 - conductanceFactor) / lifeRange)));
+    }
+    else{
+      strokeWeight(1); 
+    }
+    line(p1.x, p1.y, p2.x, p2.y);
+  }
+  /*void display(float r, float g, float b){
     stroke(r, g, b);
     strokeWeight(2*(dist/resistance));
     line(p1.x, p1.y, p2.x, p2.y);
-  }
+  }*/
   
   String toString(){
     return "e("+p1.toString()+", "+p2.toString()+")";
@@ -199,5 +223,6 @@ class Graph {
     void removeEdge(Edge e){
       graph.get(findList(e.p1)).remove(e.p2);
       graph.get(findList(e.p2)).remove(e.p1);
+      //totalGraphConductance -= 1 / e.resistance;
     }
 }

@@ -18,8 +18,8 @@ PrintWriter normalizeText, pointVoltage, resistancesText;
 void setup(){
   //variables
   uiSize = 150;
-  marginSize = 100;
-  numPoints = 50;
+  marginSize = 10;
+  numPoints = 399;
   stepCount = 0;
   /* 
   Jama
@@ -31,12 +31,16 @@ void setup(){
   *100: Smooth
   *200: Smooth
   *300: breaks processing (to much graphical overhead/ print statements?)
+  Mar30
+  *300: No issues
+  *399: No issues
+  *400: error->Outside of matrix bounds 
   */
   
   
   running = false;
   step = false;
-  simulationSpeed = 5;
+  simulationSpeed = 30;
   
   //window setup
   size(750, 600);
@@ -54,7 +58,7 @@ void setup(){
   loadButtons();
   
   //Test Points
-  Point p1 = new Point(250, 150);
+  /*Point p1 = new Point(250, 150);
   p1.setName("A");
   points.add(p1);
   Point p2 = new Point(400, 150);
@@ -68,14 +72,14 @@ void setup(){
   points.add(p4);
   Point p5 = new Point(300, 400);
   p5.setName("E");
-  points.add(p5);
+  points.add(p5);*/
   
   //Default Points
-  /*for(int i = 0; i < numPoints; i++){
+  for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
     //p.setName(Character.toString((char) i));
     points.add(p);
-  }*/
+  }
   
   //Draw Default Points
   for(Point p : points){
