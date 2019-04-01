@@ -160,12 +160,9 @@ void solveResistorNetwork(ArrayList<Edge> edges){
   for(int i = 0; i < orderSize; i++){
     pointOrder[i].voltage = (float)x.get(i, 0);
   }
-  pointVoltage.println("\n Step: " + stepCount);
   for(Point p : points){
     println(p.toString() + ": "+p.voltage);
-    pointVoltage.println("  " + p.toString() + ": "+p.voltage);
   }
-  pointVoltage.flush();
 }
 
 void decaySystem(float decayRate){
@@ -176,18 +173,13 @@ void decaySystem(float decayRate){
   float totalConductivity = 0;
 
   for(Edge e : edges){   
-    normalizeText.print("(" + e.dist/e.resistance + ") ");
     e.prevR = e.resistance;
     //Multiplicative Decay
     float current  = 0;
     current = abs(e.p1.voltage - e.p2.voltage) / e.resistance;
     e.resistance = e.resistance * pow((float)Math.E, -decayRate * current);
     totalConductivity += 1/e.resistance;
-    
-    normalizeText.print(e.dist/e.resistance + " + ");
   }
-  
-  normalizeText.println("= 1/" + totalConductivity);
   
   for(Edge e : edges){
     float conductance = 1 / e.resistance;
@@ -196,17 +188,11 @@ void decaySystem(float decayRate){
     conductance = (conductance / totalConductivity) * graph.totalGraphConductance;
     e.resistance = 1 / conductance;
     
-    normalizeText.print(conductance * e.dist + " + ");
-    
     //test for edge death
     if(e.testDeath()){
       deadEdgeHolding.add(e); 
     }
   }
-
-  normalizeText.println("= 1/" + graph.totalGraphConductance);  
-  normalizeText.flush();
-  resistancesText.flush();
   
   //add new dead edges to their holding list
   for(Edge e : deadEdgeHolding){

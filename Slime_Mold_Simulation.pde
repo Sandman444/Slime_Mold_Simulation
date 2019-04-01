@@ -13,7 +13,7 @@ ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
-PrintWriter normalizeText, pointVoltage, resistancesText;
+PrintWriter edgeDeathData, edgeResistanceData;
 
 void setup(){
   //variables
@@ -48,9 +48,8 @@ void setup(){
    frameRate(simulationSpeed);
    
    //initialize PrintWriters
-   normalizeText = createWriter("normalize.txt");
-   pointVoltage = createWriter("point_voltage.txt");
-   resistancesText = createWriter("resistances.txt");
+   edgeDeathData = createWriter("death_data.txt");
+   edgeResistanceData = createWriter("resistance_data.txt");
    
   //UI Setup
   fill(255); 
