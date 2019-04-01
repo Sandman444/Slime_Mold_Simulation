@@ -226,17 +226,13 @@ class Graph {
     }
     for(Edge e : edges){
       e.display(0, 255, 0);
-    
-    void removeEdge(Edge e){
-      graph.get(findList(e.p1)).remove(e.p2);
-      graph.get(findList(e.p2)).remove(e.p1);
-      //totalGraphConductance -= 1 / e.resistance;
     }
   }
-  
+    
   void removeEdge(Edge e){
     graph.get(findList(e.p1)).remove(e.p2);
     graph.get(findList(e.p2)).remove(e.p1);
+    //totalGraphConductance -= 1 / e.resistance;
   }
   
   void addPoint(Point p){
