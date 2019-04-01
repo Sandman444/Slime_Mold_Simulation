@@ -82,9 +82,9 @@ class Edge {
       return false;
   }
   Boolean testDeath(){
-    if(stepCount > 10 && stepCount < 100){
+    //if(stepCount > 10 && stepCount < 100){
       lifeRange = 3;
-    }
+   // }
     /*else if(stepCount > 100 && stepCount < 500){
       lifeRange = 2;
     }
@@ -93,7 +93,18 @@ class Edge {
     }*/
     float averageConductance = graph.totalGraphConductance / edges.size();
     float conductanceFactor = averageConductance / (1/resistance);
-    println(toString() + ": " + conductanceFactor + " ("+ 1 + lifeRange + ")"); 
+    println(toString() + ": " + conductanceFactor + " (" + lifeRange + ")"); 
+    //Data
+    String conductanceData = "";
+    for(Edge e : edges){    
+      if(e.aquireData == true){
+         conductanceData += " " + conductanceFactor;
+      }
+    }
+    if(!conductanceData.equals("")){
+      conductanceData = stepCount + conductanceData;
+      edgeConductanceFactor.println(conductanceData);
+    }
     if(conductanceFactor >= (lifeRange)){
        println("\t Kill edge ");
        deadEdge = true;

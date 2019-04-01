@@ -13,7 +13,7 @@ ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
-PrintWriter edgeDeathData, edgeResistanceData;
+PrintWriter edgeDeathData, edgeResistanceData, edgeConductanceFactor;
 
 void setup(){
   //variables
@@ -50,6 +50,7 @@ void setup(){
    //initialize PrintWriters
    edgeDeathData = createWriter("death_data.txt");
    edgeResistanceData = createWriter("resistance_data.txt");
+   edgeConductanceFactor = createWriter("conductance_factor.txt");
    
   //UI Setup
   fill(255); 

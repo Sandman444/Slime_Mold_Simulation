@@ -49,6 +49,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   
   edgeDeathData.flush();
   edgeResistanceData.flush();
+  edgeConductanceFactor.flush();
 }
 
 void twoPoints(ArrayList<Point> points){
