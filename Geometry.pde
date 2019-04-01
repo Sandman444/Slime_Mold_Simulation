@@ -85,13 +85,16 @@ class Edge {
     if(stepCount > 10 && stepCount < 100){
       lifeRange = 3;
     }
-    else if(stepCount > 100){
+    /*else if(stepCount > 100 && stepCount < 500){
       lifeRange = 2;
     }
+    else if(stepCount > 500){
+      lifeRange = 1.7;
+    }*/
     float averageConductance = graph.totalGraphConductance / edges.size();
     float conductanceFactor = averageConductance / (1/resistance);
-    println(toString() + ": " + averageConductance / (1/resistance) + " ("+ lifeRange + ")"); 
-    if(conductanceFactor >= (1+lifeRange)){
+    println(toString() + ": " + conductanceFactor + " ("+ 1 + lifeRange + ")"); 
+    if(conductanceFactor >= (lifeRange)){
        println("\t Kill edge ");
       return true;
     }
