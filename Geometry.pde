@@ -96,6 +96,7 @@ class Edge {
     println(toString() + ": " + conductanceFactor + " ("+ 1 + lifeRange + ")"); 
     if(conductanceFactor >= (lifeRange)){
        println("\t Kill edge ");
+       deadEdge = true;
       return true;
     }
     else if(deadEdge == false){
@@ -115,7 +116,10 @@ class Edge {
     stroke(r, g, b);
     float averageConductance = graph.totalGraphConductance / edges.size();
     float conductanceFactor = averageConductance / (1/resistance);
-    if(conductanceFactor < 1){
+    if(deadEdge == true){
+      strokeWeight(1.2);
+    }
+    else if(conductanceFactor < 1){
       strokeWeight((1 - ((conductanceFactor - 1) / lifeRange)));
     }
     else if (conductanceFactor > 1 && (conductanceFactor - 1) / lifeRange < 1){     
