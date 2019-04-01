@@ -32,3 +32,16 @@ ArrayList<Edge> createDelaunay(ArrayList<Point> points){
   
   return edges;
 }
+
+//Currently working here
+/*void addPoint(Point p){
+  println("Adding Point");
+  Point closest = closestPoint(p, points);
+  ArrayList<Point> closestAdjacent = graph.getList(closest);
+  //closestAdjacent.remove(0);
+  println("Closest: " + closest.toString());
+  println("list: " + closestAdjacent);
+  for(int i = 0; i < closestAdjacent.size(); i++){
+    
+  }
+}*/

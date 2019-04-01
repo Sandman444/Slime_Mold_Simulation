@@ -67,7 +67,7 @@ void setup(){
   Point p3 = new Point(250, 300);
   p3.setName("C");
   points.add(p3);
-  Point p4 = new Point(500, 400);
+  /*Point p4 = new Point(500, 400);
   p4.setName("D");
   points.add(p4);
   Point p5 = new Point(300, 400);
@@ -129,6 +129,8 @@ void mouseClicked(){
   if(mouseX > uiSize){
     Point p = new Point(mouseX, mouseY);
     pointsToAdd.add(p);
+    p.setName(Character.toString((char)(points.size() + pointsToAdd.size() + 64)));
     p.display();
+    drawSystem();
   }
 }
