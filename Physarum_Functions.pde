@@ -34,6 +34,21 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   decaySystem(0.01);
   
   stepCount++;
+  
+  //Data
+  String resistanceData = "";
+  for(Edge e : edges){    
+    if(e.aquireData == true){
+       resistanceData += " " + e.resistance;
+    }
+  }
+  if(!resistanceData.equals("")){
+    resistanceData = stepCount + resistanceData;
+    edgeResistanceData.println(resistanceData);
+  }
+  
+  edgeDeathData.flush();
+  edgeResistanceData.flush();
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -191,6 +206,7 @@ void decaySystem(float decayRate){
     //test for edge death
     if(e.testDeath()){
       deadEdgeHolding.add(e); 
+      edgeDeathData.println(stepCount);
     }
   }
   

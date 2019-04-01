@@ -93,6 +93,12 @@ void setup(){
   graph = new Graph(points, edges);
   initialSystemResistance = edges.size();
   println(graph.toString());  
+  
+  //Name data columns in data output files
+  edgeDeathData.println("StepCount at Edge Death");
+  edgeDeathData.flush();
+  edgeResistanceData.println("StepCount Resistance");
+  edgeResistanceData.flush();
 }
 
 void draw(){
@@ -125,11 +131,24 @@ void draw(){
 }
 
 void mouseClicked(){
-  if(mouseX > uiSize){
+  //select points around interested edges
+  for(Edge e : edges){
+    float range = 5;
+    //inside x range
+    if(mouseX >= e.p1.x - range  && mouseX <= e.p1.x + range){
+      //inside y range
+      if(mouseY >= e.p1.y - range  && mouseY <= e.p1.y + range){
+        e.p1.selected = true;
+        graph.refresh();
+      }
+    }
+  }
+  //replaced point addition with edge selection for data aquisition
+  /*if(mouseX > uiSize){
     Point p = new Point(mouseX, mouseY);
     pointsToAdd.add(p);
     p.setName(Character.toString((char)(points.size() + pointsToAdd.size() + 64)));
     p.display();
     drawSystem();
-  }
+  }*/
 }

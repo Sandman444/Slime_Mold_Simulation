@@ -4,12 +4,14 @@ class Point {
   float y;
   String name;
   float voltage;
+  boolean selected;
   
   Point(float x_, float y_){
     x = x_;
     y = y_;
     name = "";
     voltage = 0;
+    selected = false;
   }
   float getX(){
     return x;
@@ -58,7 +60,7 @@ class Edge {
   float prevR;
   float dist;
   float lifeRange;
-  boolean deadEdge, growing;
+  boolean deadEdge, growing, aquireData;
   
   Edge(Point p1_, Point p2_){
      p1 = p1_;
@@ -69,6 +71,7 @@ class Edge {
      prevR = resistance;
      deadEdge = false;
      growing = false;
+     aquireData = false;
      lifeRange = 5;
   }
   
@@ -222,10 +225,23 @@ class Graph {
   void refresh(){
     
     for(Point p : points){
-      p.display();
+      if(p.selected == true){
+        p.display(255, 0, 255);
+      }
+      else{        
+        p.display();
+      }
     }
     for(Edge e : edges){
-      e.display(0, 255, 0);
+      if(e.p1.selected == true && e.p2.selected == true){
+        e.aquireData = true;
+      }
+      if(e.aquireData == true){
+        e.display(0, 255, 255);
+      }
+      else {
+        e.display();
+      }
     }
   }
     
