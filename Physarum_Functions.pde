@@ -9,10 +9,10 @@ void drawSystem(){
   for(Edge e : edges){
     //e.display();
     //TEMP: colour growing green and decaying red
-    if(e.prevR > e.resistance){
+    if(e.prevC < 1/e.resistance){
       e.display(0, 255, 0);
     }
-    else if(e.prevR < e.resistance){
+    else if(e.prevC > 1/e.resistance){
       e.display(255, 0, 0);
     }
     else { //starts as white
@@ -33,7 +33,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.01);
+  decaySystem(0.001);
   
   stepCount++;
   
@@ -185,12 +185,11 @@ void decaySystem(float decayRate){
   //calculate change in conductivity for the time step
   println("\n" + "Decay testing");
   
-  ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
   float totalConductivity = 0;
 
   for(Edge e : edges){   
     normalizeText.print("(" + e.dist/e.resistance + ") ");
-    e.prevR = e.resistance;
+    e.prevC = 1/e.resistance;
     //Multiplicative Decay
     float current  = 0;
     current = abs(e.p1.voltage - e.p2.voltage) / e.resistance;
@@ -211,8 +210,9 @@ void decaySystem(float decayRate){
     e.resistance = 1 / conductance;
     
     if(edgeDeathFlag == true){
-      //edgeDeathText.println("\t"+1/minConductive.resistance + " > " + conductance);
-      if(1/minConductive.resistance > conductance){
+      //edgeDeathText.println("\t"+(1/minConductive.resistance)/minConductive.dist + " > " + conductance/e.dist);
+      //edgeDeathText.println("\t"+e.dist);
+      if((1/minConductive.resistance)/minConductive.dist > conductance/e.dist){
         minConductive = e;
       }
     }
@@ -225,10 +225,11 @@ void decaySystem(float decayRate){
   
   //kill the edge with the least conductance and add to holding list
   if(edgeDeathFlag == true){
+    println("kill edge");
     edges.remove(minConductive);
     deadEdges.add(minConductive);
     graph.removeEdge(minConductive);
-    edgeDeathText.println(1/minConductive.resistance);
+    edgeDeathText.println((1/minConductive.resistance)/minConductive.dist);
     
     edgeDeathFlag = false;
   }

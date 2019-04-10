@@ -58,7 +58,7 @@ class Edge {
   Point p1;
   Point p2;
   float resistance;
-  float prevR;
+  float prevC;
   float dist;
   float lifeRange;
   boolean deadEdge, growing;
@@ -69,7 +69,7 @@ class Edge {
      dist = sqrt(sq(p1.x - p2.x) + sq(p1.y - p2.y));
      initialResistance = dist;
      resistance = initialResistance;
-     prevR = resistance;
+     prevC = 1/resistance;
      deadEdge = false;
      growing = false;
      lifeRange = 5;
