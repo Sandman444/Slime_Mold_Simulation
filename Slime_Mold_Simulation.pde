@@ -62,28 +62,35 @@ void setup(){
   loadButtons();
   
   //Test Points
-  /*Point p1 = new Point(250, 150);
+  Point p1 = new Point(200, 150);
   p1.setName("A");
   points.add(p1);
-  Point p2 = new Point(400, 150);
+  p1.isSource = true;
+  source = p1;
+  Point p2 = new Point(300, 150);
   p2.setName("B");
   points.add(p2);
-  Point p3 = new Point(250, 300);
+  Point p3 = new Point(400, 100);
   p3.setName("C");
   points.add(p3);
-  /*Point p4 = new Point(500, 400);
+  Point p4 = new Point(400, 200);
   p4.setName("D");
   points.add(p4);
-  Point p5 = new Point(300, 400);
+  Point p5 = new Point(550, 150);
   p5.setName("E");
-  points.add(p5);*/
+  points.add(p5);
+  Point p6 = new Point(600, 150);
+  p6.setName("F");
+  points.add(p6);
+  p6.isSink = true;
+  sink = p6;
   
   //Default Points
-  for(int i = 0; i < numPoints; i++){
+  /*for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
     //p.setName(Character.toString((char) i));
     points.add(p);
-  }
+  }*/
   
   //Draw Default Points
   for(Point p : points){
@@ -92,12 +99,19 @@ void setup(){
   
   //Calculate Delaunay Triangulation
   edges = createDelaunay(points);
-  drawSystem();
   
   //Create Graph adjacency list
   graph = new Graph(points, edges);
+  
+  //remove unwanted edges
+  graph.removeEdge(graph.getEdge(p1, p3));
+  graph.removeEdge(graph.getEdge(p1, p4));
+  graph.removeEdge(graph.getEdge(p3, p6));
+  graph.removeEdge(graph.getEdge(p4, p6));
+  
   initialSystemResistance = edges.size();
-  println(graph.toString());  
+  drawSystem();
+  println(graph.toString());
 }
 
 void draw(){
@@ -140,7 +154,7 @@ void draw(){
   }
 }
 
-void mouseClicked(){
+/*void mouseClicked(){
   int selectRange = 3;
   if(mouseX > uiSize){
     for(Point p : points){
@@ -164,4 +178,4 @@ void mouseClicked(){
       }
     }
   }
-}
+}*/
