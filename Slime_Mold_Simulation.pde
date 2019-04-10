@@ -146,7 +146,6 @@ void draw(){
     for(Point p : pointsToAdd){
       p.display();
     }
-    println(graph.toString());
     pressurizeSystem(points, edges);
     drawSystem(); //draw edges in system
     

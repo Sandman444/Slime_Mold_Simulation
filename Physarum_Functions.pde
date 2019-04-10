@@ -9,15 +9,17 @@ void drawSystem(){
   for(Edge e : edges){
     //e.display();
     //TEMP: colour growing green and decaying red
-    if(e.prevC > 1/e.resistance){
-      e.display(0, 255, 0);
+   /* if(e.prevC < 1/e.resistance){
+      e.display(0, 255, 0); //green for growing
     }
-    else if(e.prevC < 1/e.resistance){
-      e.display(255, 0, 0);
+    else if(e.prevC > 1/e.resistance){
+      e.display(255, 0, 0); //red for dying
     }
     else { //starts as white
       e.display();
-    }    
+    }    */
+    
+    e.display(255 * abs(e.p1.voltage - e.p2.voltage), 255 * abs(e.p1.voltage - e.p2.voltage), 255 * abs(e.p1.voltage - e.p2.voltage));
   }
   for(Edge dead : deadEdges){
     dead.display(0,0,255);
@@ -188,6 +190,8 @@ void decaySystem(float decayRate){
   float totalConductivity = 0;
 
   for(Edge e : edges){   
+    println("Initial Resistances");
+    println(e.toString() + "-> " + e.resistance);
     normalizeText.print("(" + e.dist/e.resistance + ") ");
     e.prevC = 1/e.resistance;
     //Multiplicative Decay
@@ -195,12 +199,13 @@ void decaySystem(float decayRate){
     current = abs(e.p1.voltage - e.p2.voltage) / e.resistance;
     e.resistance = e.resistance * pow((float)Math.E, -decayRate * current);
     totalConductivity += 1/e.resistance;
+    println("Pre-Normalization");
     println(e.toString() + "-> " + e.resistance);
     normalizeText.print(e.dist/e.resistance + " + ");
   }
   
   normalizeText.println("= 1/" + totalConductivity);
-  
+  println("Normalized");
   Edge minConductive = edges.get(0); //only used when killing an edge
   for(Edge e : edges){
     float conductance = 1 / e.resistance;
@@ -208,7 +213,7 @@ void decaySystem(float decayRate){
     //normalize conductance to initial graph conductance
     conductance = (conductance / totalConductivity) * graph.totalGraphConductance;
     e.resistance = 1 / conductance;
-    
+    println(e.toString() + "-> " + e.resistance);
     if(edgeDeathFlag == true){
       //edgeDeathText.println("\t"+1/minConductive.resistance + " > " + conductance);
       if(1/minConductive.resistance > conductance){
@@ -223,12 +228,12 @@ void decaySystem(float decayRate){
   
   
   //kill the edge with the least conductance and add to holding list
-  if(edgeDeathFlag == true){
+  /*if(edgeDeathFlag == true){
     edges.remove(minConductive);
     deadEdges.add(minConductive);
     graph.removeEdge(minConductive);
     edgeDeathText.println(1/minConductive.resistance);
     
     edgeDeathFlag = false;
-  }
+  }*/
 }
