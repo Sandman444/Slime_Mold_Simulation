@@ -62,21 +62,22 @@ void setup(){
   loadButtons();
   
   //Test Points
-  /*Point p1 = new Point(250, 150);
+  /*Point p1 = new Point(200, 150);
   p1.setName("A");
   points.add(p1);
-  Point p2 = new Point(400, 150);
+  Point p2 = new Point(300, 150);
   p2.setName("B");
   points.add(p2);
-  Point p3 = new Point(250, 300);
+  Point p3 = new Point(500, 150);
   p3.setName("C");
   points.add(p3);
-  /*Point p4 = new Point(500, 400);
+  Point p4 = new Point(600, 150);
   p4.setName("D");
   points.add(p4);
-  Point p5 = new Point(300, 400);
+  Point p5 = new Point(400, 100);
   p5.setName("E");
   points.add(p5);*/
+  
   
   //Default Points
   for(int i = 0; i < numPoints; i++){
@@ -91,7 +92,7 @@ void setup(){
   }
   
   //Calculate Delaunay Triangulation
-  edges = createDelaunay(points);
+  //edges = createDelaunay(points);
   drawSystem();
   
   //Create Graph adjacency list

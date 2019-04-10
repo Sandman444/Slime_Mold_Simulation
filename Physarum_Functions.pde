@@ -1,7 +1,7 @@
 //single call to pressurize system between a source and a sink node
 
 int sourceVoltage = 1;
-int edgeCutRate = 2; //cut another edge every after x number of steps
+int edgeCutRate = 1; //cut another edge every after x number of steps
 boolean edgeDeathFlag = false; //if true time to cut an edge
 
 void drawSystem(){
@@ -20,6 +20,7 @@ void drawSystem(){
     }    
   }
   for(Edge dead : deadEdges){
+    strokeWeight(1.5);
     dead.display(0,0,255);
   }
 }
