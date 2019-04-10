@@ -2,6 +2,8 @@
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
 int sourceVoltage = 1;
+int edgeCutRate = 10; //cut another edge every after x number of steps
+boolean edgeDeathFlag = false; //if true time to cut an edge
 
 void drawSystem(){
   //draw all edges in system
@@ -169,6 +171,11 @@ void solveResistorNetwork(ArrayList<Edge> edges){
 }
 
 void decaySystem(float decayRate){
+  //check if its time to kill an edge
+  if(stepCount % edgeCutRate == 0){
+    edgeDeathFlag = true;
+  }
+  
   //calculate change in conductivity for the time step
   println("\n" + "Decay testing");
   
@@ -189,6 +196,7 @@ void decaySystem(float decayRate){
   
   normalizeText.println("= 1/" + totalConductivity);
   
+  Edge minConductive = edges.get(0); //only used when killing an edge
   for(Edge e : edges){
     float conductance = 1 / e.resistance;
      
@@ -196,12 +204,14 @@ void decaySystem(float decayRate){
     conductance = (conductance / totalConductivity) * graph.totalGraphConductance;
     e.resistance = 1 / conductance;
     
-    normalizeText.print(conductance * e.dist + " + ");
-    
-    //test for edge death
-    if(e.testDeath()){
-      deadEdgeHolding.add(e); 
+    if(edgeDeathFlag == true){
+      
+      edgeDeathText.println("Time to kill: " + stepCount);
+      edgeDeathText.flush();
+      edgeDeathFlag = false;
     }
+    
+    normalizeText.print(conductance * e.dist + " + ");
   }
 
   normalizeText.println("= 1/" + graph.totalGraphConductance);  
