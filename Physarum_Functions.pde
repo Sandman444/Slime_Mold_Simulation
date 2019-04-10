@@ -2,7 +2,7 @@
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
 int sourceVoltage = 1;
-int edgeCutRate = 4; //cut another edge every after x number of steps
+int edgeCutRate = 2; //cut another edge every after x number of steps
 boolean edgeDeathFlag = false; //if true time to cut an edge
 
 void drawSystem(){
@@ -33,7 +33,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
-  decaySystem(0.01);
+  decaySystem(0.001);
   
   stepCount++;
   
@@ -210,8 +210,9 @@ void decaySystem(float decayRate){
     e.resistance = 1 / conductance;
     
     if(edgeDeathFlag == true){
-      //edgeDeathText.println("\t"+1/minConductive.resistance + " > " + conductance);
-      if(1/minConductive.resistance > conductance){
+      //edgeDeathText.println("\t"+(1/minConductive.resistance)/minConductive.dist + " > " + conductance/e.dist);
+      //edgeDeathText.println("\t"+e.dist);
+      if((1/minConductive.resistance)/minConductive.dist > conductance/e.dist){
         minConductive = e;
       }
     }
@@ -228,7 +229,7 @@ void decaySystem(float decayRate){
     edges.remove(minConductive);
     deadEdges.add(minConductive);
     graph.removeEdge(minConductive);
-    edgeDeathText.println(1/minConductive.resistance);
+    edgeDeathText.println((1/minConductive.resistance)/minConductive.dist);
     
     edgeDeathFlag = false;
   }

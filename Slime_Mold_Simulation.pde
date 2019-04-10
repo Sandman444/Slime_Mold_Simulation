@@ -109,9 +109,9 @@ void draw(){
   point(uiSize+5, 5);
   
   //Run simulation
-  if(stepCount >= 300){ //cut off early for testing purposes
+  /*if(stepCount >= 300){ //cut off early for testing purposes
     running = false;
-  }
+  }*/
   if(running ==true || step == true ){
     clear();
     drawUI(); //UI_Elements
