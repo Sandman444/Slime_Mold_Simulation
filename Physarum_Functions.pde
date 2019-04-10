@@ -18,8 +18,8 @@ void drawSystem(){
     else { //starts as white
       e.display();
     }    */
-    
-    e.display(255 * abs(e.p1.voltage - e.p2.voltage), 255 * abs(e.p1.voltage - e.p2.voltage), 255 * abs(e.p1.voltage - e.p2.voltage));
+    println("draw: " + 10000*(1 - pow((float)Math.E, -0.01 * abs(e.p1.voltage - e.p2.voltage) / e.resistance)));
+    e.display(255*20000*(1 - pow((float)Math.E, -0.01 * abs(e.p1.voltage - e.p2.voltage) / e.resistance)), 0, 0);
   }
   for(Edge dead : deadEdges){
     dead.display(0,0,255);
