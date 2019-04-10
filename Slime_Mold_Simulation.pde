@@ -13,7 +13,7 @@ ArrayList<Edge> deadEdges = new ArrayList<Edge>();
 Graph graph;
 Boolean running, step;
 int simulationSpeed;
-PrintWriter normalizeText, pointVoltage, resistancesText, edgeDeathText;
+PrintWriter normalizeText, pointVoltage, resistancesText, edgeDeathText, pointsText;
 
 void setup(){
   //variables
@@ -52,6 +52,7 @@ void setup(){
    pointVoltage = createWriter("point_voltage.txt");
    resistancesText = createWriter("resistances.txt");
    edgeDeathText = createWriter("edge_death.txt");
+   pointsText = createWriter("points.txt");
    
   //UI Setup
   fill(255); 
@@ -68,7 +69,7 @@ void setup(){
   Point p3 = new Point(250, 300);
   p3.setName("C");
   points.add(p3);
-  /*Point p4 = new Point(500, 400);
+  Point p4 = new Point(500, 400);
   p4.setName("D");
   points.add(p4);
   Point p5 = new Point(300, 400);
@@ -76,11 +77,11 @@ void setup(){
   points.add(p5);*/
   
   //Default Points
-  for(int i = 0; i < numPoints; i++){
+  /*for(int i = 0; i < numPoints; i++){
     Point p = new Point(floor(random(uiSize+marginSize, width-marginSize)), floor(random(marginSize, height-marginSize)));
     //p.setName(Character.toString((char) i));
     points.add(p);
-  }
+  }*/
   
   //Draw Default Points
   for(Point p : points){

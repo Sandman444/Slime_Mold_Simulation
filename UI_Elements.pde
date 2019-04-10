@@ -117,5 +117,11 @@ void actionPerformed(GUIEvent event){
       }
     }
     println(graph.toString());
+    
+    //print points to file
+    for(Point p : points){
+      pointsText.println(p.toString() + ": " + p.x + " " + p.y);
+    }
+    pointsText.flush();
   }
 }
