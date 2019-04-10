@@ -15,6 +15,9 @@ Boolean running, step;
 int simulationSpeed;
 PrintWriter normalizeText, pointVoltage, resistancesText, edgeDeathText;
 
+Point source = new Point(0, 0);
+Point sink = new Point(0, 0);
+
 void setup(){
   //variables
   uiSize = 150;
@@ -109,14 +112,22 @@ void draw(){
   point(uiSize+5, 5);
   
   //Run simulation
-  if(stepCount >= 300){ //cut off early for testing purposes
+  /*if(stepCount >= 300){ //cut off early for testing purposes
     running = false;
-  }
+  }*/
   if(running ==true || step == true ){
     clear();
     drawUI(); //UI_Elements
     for(Point p : points){
-      p.display();
+      if(p.isSource){
+        p.display(255, 255, 0);
+      }
+      else if(p.isSink){
+        p.display(0, 255, 255);
+      }
+      else{
+        p.display();
+      }
     }
     for(Point p : pointsToAdd){
       p.display();
@@ -130,11 +141,27 @@ void draw(){
 }
 
 void mouseClicked(){
+  int selectRange = 3;
   if(mouseX > uiSize){
-    Point p = new Point(mouseX, mouseY);
-    pointsToAdd.add(p);
-    p.setName(Character.toString((char)(points.size() + pointsToAdd.size() + 64)));
-    p.display();
-    drawSystem();
+    for(Point p : points){
+      //selection box around the point
+      if(mouseX - selectRange < p.x && mouseX + selectRange > p.x){
+        if(mouseY - selectRange < p.y && mouseY + selectRange > p.y){
+          //1st selected is source
+          if(source.x == 0 && source.y == 0){
+            println("source");
+            source = p;
+            p.isSource = true;
+            p.display(255, 255, 0);
+          }
+          //2nd selected is sink
+          else{
+            sink = p;
+            p.isSink = true;
+            p.display(0, 255, 255);          
+          }
+        }
+      }
+    }
   }
 }

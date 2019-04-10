@@ -4,12 +4,15 @@ class Point {
   float y;
   String name;
   float voltage;
+  boolean isSource, isSink;
   
   Point(float x_, float y_){
     x = x_;
     y = y_;
     name = "";
     voltage = 0;
+    isSource = false;
+    isSink = false;
   }
   float getX(){
     return x;

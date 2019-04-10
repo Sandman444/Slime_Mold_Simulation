@@ -1,6 +1,5 @@
 //single call to pressurize system between a source and a sink node
-Point source = new Point(0, 0);
-Point sink = new Point(0, 0);
+
 int sourceVoltage = 1;
 int edgeCutRate = 2; //cut another edge every after x number of steps
 boolean edgeDeathFlag = false; //if true time to cut an edge
@@ -29,7 +28,7 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   
   
   //Step 1: Set two random points as source and sink
-  twoPoints(points);
+  //twoPoints(points);
   //Step 2: Solve the linear system of the resistor Network
   solveResistorNetwork(edges);
   //Step 3: strengthen/decay all edges in system
