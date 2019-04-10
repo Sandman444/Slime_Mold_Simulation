@@ -19,7 +19,7 @@ void setup(){
   //variables
   uiSize = 150;
   marginSize = 10;
-  numPoints = 399;
+  numPoints = 200;
   stepCount = 0;
   /* 
   Jama
@@ -109,7 +109,10 @@ void draw(){
   point(uiSize+5, 5);
   
   //Run simulation
-  if(running ==true || step == true){
+  if(stepCount >= 300){ //cut off early for testing purposes
+    running = false;
+  }
+  if(running ==true || step == true ){
     clear();
     drawUI(); //UI_Elements
     for(Point p : points){

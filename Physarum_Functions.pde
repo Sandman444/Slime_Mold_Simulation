@@ -2,7 +2,7 @@
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
 int sourceVoltage = 1;
-int edgeCutRate = 10; //cut another edge every after x number of steps
+int edgeCutRate = 2; //cut another edge every after x number of steps
 boolean edgeDeathFlag = false; //if true time to cut an edge
 
 void drawSystem(){
@@ -36,6 +36,11 @@ void pressurizeSystem(ArrayList<Point> points, ArrayList<Edge> edges){
   decaySystem(0.01);
   
   stepCount++;
+  
+  //flush to text files
+  normalizeText.flush();
+  resistancesText.flush();
+  edgeDeathText.flush();
 }
 
 void twoPoints(ArrayList<Point> points){
@@ -174,6 +179,7 @@ void decaySystem(float decayRate){
   //check if its time to kill an edge
   if(stepCount % edgeCutRate == 0){
     edgeDeathFlag = true;
+    //edgeDeathText.println("Step "+stepCount);
   }
   
   //calculate change in conductivity for the time step
@@ -205,24 +211,25 @@ void decaySystem(float decayRate){
     e.resistance = 1 / conductance;
     
     if(edgeDeathFlag == true){
-      
-      edgeDeathText.println("Time to kill: " + stepCount);
-      edgeDeathText.flush();
-      edgeDeathFlag = false;
+      //edgeDeathText.println("\t"+1/minConductive.resistance + " > " + conductance);
+      if(1/minConductive.resistance > conductance){
+        minConductive = e;
+      }
     }
     
     normalizeText.print(conductance * e.dist + " + ");
   }
 
   normalizeText.println("= 1/" + graph.totalGraphConductance);  
-  normalizeText.flush();
-  resistancesText.flush();
   
-  //add new dead edges to their holding list
-  for(Edge e : deadEdgeHolding){
-    edges.remove(e);
-    deadEdges.add(e);
-    graph.removeEdge(e);
-    println("Dead Edge: "+e.toString());
+  
+  //kill the edge with the least conductance and add to holding list
+  if(edgeDeathFlag == true){
+    edges.remove(minConductive);
+    deadEdges.add(minConductive);
+    graph.removeEdge(minConductive);
+    edgeDeathText.println(1/minConductive.resistance);
+    
+    edgeDeathFlag = false;
   }
 }
