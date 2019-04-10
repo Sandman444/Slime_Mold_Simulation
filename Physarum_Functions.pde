@@ -2,7 +2,7 @@
 Point source = new Point(0, 0);
 Point sink = new Point(0, 0);
 int sourceVoltage = 1;
-int edgeCutRate = 2; //cut another edge every after x number of steps
+int edgeCutRate = 4; //cut another edge every after x number of steps
 boolean edgeDeathFlag = false; //if true time to cut an edge
 
 void drawSystem(){
@@ -10,10 +10,10 @@ void drawSystem(){
   for(Edge e : edges){
     //e.display();
     //TEMP: colour growing green and decaying red
-    if(e.prevR > e.resistance){
+    if(e.prevC < 1/e.resistance){
       e.display(0, 255, 0);
     }
-    else if(e.prevR < e.resistance){
+    else if(e.prevC > 1/e.resistance){
       e.display(255, 0, 0);
     }
     else { //starts as white
@@ -185,12 +185,11 @@ void decaySystem(float decayRate){
   //calculate change in conductivity for the time step
   println("\n" + "Decay testing");
   
-  ArrayList<Edge> deadEdgeHolding = new ArrayList<Edge>();
   float totalConductivity = 0;
 
   for(Edge e : edges){   
     normalizeText.print("(" + e.dist/e.resistance + ") ");
-    e.prevR = e.resistance;
+    e.prevC = 1/e.resistance;
     //Multiplicative Decay
     float current  = 0;
     current = abs(e.p1.voltage - e.p2.voltage) / e.resistance;
@@ -225,6 +224,7 @@ void decaySystem(float decayRate){
   
   //kill the edge with the least conductance and add to holding list
   if(edgeDeathFlag == true){
+    println("kill edge");
     edges.remove(minConductive);
     deadEdges.add(minConductive);
     graph.removeEdge(minConductive);
